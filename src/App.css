@@ -1,0 +1,238 @@
+/* client/src/App.css */
+
+/* ---- 공통 배경 설정 ---- */
+body {
+  margin: 0;
+  background-image: url("./assets/cloud.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: "Pretendard", sans-serif, system-ui;
+  overflow: hidden; /* 화면 흔들림 방지 */
+}
+
+/* ---- 화면 1: 홈 (Landing Page) ---- */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 화면 꽉 채우기 */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.home-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 40px;
+  text-shadow: 0px 2px 10px rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+/* 홈 화면의 검색 박스 (세로 배치 등) */
+.search-box-home {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 500px; /* 적당한 너비 */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  margin-left: 5px;
+}
+
+.home-input {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.home-input::placeholder {
+  color: #aaa; /* 연한 회색 */
+  transition: color 0.3s; /* 사라질 때 부드럽게 */
+}
+
+.home-input:focus {
+  border-color: #007bff;
+}
+
+.home-input:focus::placeholder {
+  color: transparent;
+}
+
+/* 크고 잘 보이는 생성 버튼 */
+.big-generate-btn {
+  margin-top: 20px;
+  padding: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.big-generate-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px);
+}
+
+.big-generate-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---- 화면 2: 결과 (Result Page) ---- */
+.result-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.5); /* 살짝 배경 톤다운 */
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.result-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2c3e50;
+  text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* 결과 화면의 메인 콘텐츠 (지도+리스트) 꽉 채우기 */
+.result-content {
+  display: flex;
+  gap: 20px;
+  flex: 1; /* 남은 높이 모두 차지 */
+  overflow: hidden; /* 자식 스크롤 허용 */
+}
+
+.map-area {
+  flex: 2; /* 지도 비율 2 */
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid white;
+}
+
+.list-area {
+  flex: 1; /* 리스트 비율 1 */
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  overflow-y: auto; /* 리스트만 스크롤 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 로딩 스피너 */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 리스트 아이템 등 기존 스타일 유지 */
+.day-section {
+  margin-bottom: 25px;
+}
+.day-header {
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+}
+.place-item {
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.place-item:hover {
+  transform: translateY(-3px);
+  background-color: #f8f9fa;
+}
+.place-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.place-index {
+  font-weight: bold;
+  margin-right: 10px;
+}
+.place-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+.place-desc {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #666;
+  padding-left: 45px;
+}
