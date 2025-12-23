@@ -2,14 +2,29 @@
 import express from "express";
 import cors from "cors";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import "dotenv/config"; //.env불러오기 => api키 암호화
+
+// // ▼▼▼ [수정 시작] 무조건 읽어내는 절대 경로 설정 ▼▼▼
+// import dotenv from "dotenv";
+// import { fileURLToPath } from "url";
+// import { dirname, join } from "path";
+
+// // 현재 파일(server.js)의 절대 경로를 알아냅니다.
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+
+// // 바로 그 옆에 있는 .env 파일을 강제로 지정합니다.
+// console.log("📍 .env 파일 찾는 경로:", join(__dirname, ".env"));
+// dotenv.config({ path: join(__dirname, ".env") });
+// // ▲▲▲ [수정 끝] ▲▲▲
 
 const app = express();
 const PORT = 8080;
 
-// ★ 보안 경고: 키 관리 주의하세요!
-const genAI = new GoogleGenerativeAI("AIzaSyBawW2UMOsk2-Qxgsfd2lkR7XNeU8Wek5g");
+// ** 키 관리 주의
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "http://localhost:5175", credentials: true }));
 app.use(express.json());
 
 app.post("/api/travel-plan", async (req, res) => {
@@ -89,27 +104,40 @@ app.post("/api/travel-plan", async (req, res) => {
     const response = await result.response;
     let text = response.text();
 
-    console.log("🤖 Gemini(목적별 상세) 응답 완료");
+    console.log("🤖 Gemini 원본 응답:", text); // 디버깅용 로그
 
-    text = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-    const parsedData = JSON.parse(text);
+    // ★ [강력한 수정] JSON만 쏙 뽑아내는 로직
+    // AI가 앞뒤로 잡담을 해도, 첫 번째 '{'와 마지막 '}' 사이만 가져옵니다.
+    const jsonStartIndex = text.indexOf("{");
+    const jsonEndIndex = text.lastIndexOf("}");
 
-    res.json(parsedData);
+    if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+      // 순수 JSON 문자열만 추출
+      const jsonStr = text.substring(jsonStartIndex, jsonEndIndex + 1);
+
+      try {
+        const parsedData = JSON.parse(jsonStr);
+        res.json(parsedData); // 성공!
+      } catch (e) {
+        console.error("❌ JSON 파싱 실패 (내용이 깨짐):", e);
+        res.json({
+          message: "데이터 형식이 올바르지 않습니다.",
+          itinerary: [],
+        });
+      }
+    } else {
+      console.error("❌ 응답에서 JSON을 찾을 수 없음");
+      res.json({
+        message: "AI가 올바른 응답을 주지 않았습니다.",
+        itinerary: [],
+      });
+    }
   } catch (error) {
-    console.error("❌ 에러 발생:", error);
-    res.json({ message: "실패", itinerary: [] });
+    console.error("❌ 서버 에러 발생:", error);
+    res.json({ message: "서버 내부 오류", itinerary: [] });
   }
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`서버 ON: http://localhost:${PORT}`);
-});
-
-server.on("error", (e) => {
-  if (e.code === "EADDRINUSE") {
-    console.log(`🚨 포트 ${PORT} 사용 중! kill -9 명령어로 끄세요.`);
-  }
+  console.log(`✅ 서버가 실행되었습니다! http://localhost:${PORT}`);
 });

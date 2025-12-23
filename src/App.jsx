@@ -6,8 +6,9 @@ import ItineraryList from "./components/ItineraryList";
 import "./App.css";
 
 const defaultCenter = { lat: 37.5665, lng: 126.978 };
-// ★ 구글 맵 키 확인!
-const GOOGLE_MAPS_API_KEY = "AIzaSyAG3XYXFDXknd25ZeI-PQ496jKLvDo1Z9Q";
+
+// ★* 구글 맵 키 보안 주의
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 function App() {
   const [destination, setDestination] = useState(""); // 빈값 초기화
